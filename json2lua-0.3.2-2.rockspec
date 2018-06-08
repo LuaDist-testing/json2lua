@@ -1,10 +1,10 @@
 -- This file was automatically generated for the LuaDist project.
 
 package = "json2lua"
-version = "0.3.2-1"
+version = "0.3.2-2"
 -- LuaDist source
 source = {
-  tag = "0.3.2-1",
+  tag = "0.3.2-2",
   url = "git://github.com/LuaDist-testing/json2lua.git"
 }
 -- Original source
@@ -20,7 +20,7 @@ description = {
 dependencies = {
    "lua >= 5.1",
    "luajson >= 1.2",
-   "lua-nucleo >= 0.0.1"
+   "lua-nucleo >= 0.0.2"
 }
 build = {
    type = "none",
