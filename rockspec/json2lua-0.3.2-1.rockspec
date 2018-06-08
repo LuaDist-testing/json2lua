@@ -1,17 +1,9 @@
--- This file was automatically generated for the LuaDist project.
-
 package = "json2lua"
-version = "0.2-2"
--- LuaDist source
+version = "0.3.2-1"
 source = {
-  tag = "0.2-2",
-  url = "git://github.com/LuaDist-testing/json2lua.git"
+   url = "git://github.com/agladysh/json2lua.git",
+   branch = "v0.3.2"
 }
--- Original source
--- source = {
---    url = "git://github.com/agladysh/json2lua.git",
---    branch = "v0.2"
--- }
 description = {
    summary = "A command-line tool to convert JSON to Lua",
    homepage = "http://github.com/agladysh/json2lua",
@@ -19,7 +11,7 @@ description = {
 }
 dependencies = {
    "lua >= 5.1",
-   "luajson",
+   "luajson >= 1.2",
    "lua-nucleo >= 0.0.1"
 }
 build = {
