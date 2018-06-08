@@ -1,0 +1,87 @@
+#! /bin/bash
+
+# Detect Lua interpreter (prefer LuaJIT 2)
+if [ ! -z "${LUA}" ]; then
+  if [ -z "$(which ${LUA})" ]; then
+    LUA=""
+  fi
+fi
+
+if [ -z "${LUA}" ]; then
+  LUA="luajit2"
+  if [ -z "$(which ${LUA})" ]; then
+    LUA="luajit"
+    if [ -z "$(which ${LUA})" ]; then
+      LUA="lua"
+
+      if [ -z "$(which ${LUA})" ]; then
+        echo "Error: luajit2, luajit and lua executables not found" >&2
+        exit 1
+      fi
+    fi
+  fi
+fi
+
+${LUA} -e "
+
+pcall(require, 'luarocks.require') -- Ignoring errors
+
+local json_decode, json_util
+do
+  local json, err = pcall(require, 'json')
+  if not json then
+    io.stdout:write(
+        err, '\n\n',
+        'try running \'luarocks install luajson\'', '\n'
+      )
+    io.stdout:flush()
+    os.exit(1)
+  end
+
+  json_decode = require('json.decode')
+  json_util = require('json.util')
+end
+
+--------------------------------------------------------------------------------
+
+do -- Bootstrap lua-nucleo
+  local res, err = pcall(require, 'lua-nucleo.module')
+  if not res then
+    io.stdout:write(
+        err,
+        '\n\n',
+        'try running \'luarocks install lua-nucleo',
+        ' --from=http://luarocks.org/repositories/rocks-cvs\'',
+        '\n'
+      )
+    io.stdout:flush()
+    os.exit(1)
+  end
+
+  require('lua-nucleo.strict')
+end
+
+--------------------------------------------------------------------------------
+
+-- TODO: Add command-line parameters!
+
+local input = assert(io.stdin:read('*a'))
+
+-- See this post regarding json_decode.simple:
+-- http://permalink.gmane.org/gmane.comp.lang.lua.general/68656
+local data, err = json_decode(input, json_decode.simple)
+if err then
+  error(err)
+end
+
+if type(data) ~= 'table' then
+  local tstr = import 'lua-nucleo/tstr.lua' { 'tstr' }
+  io.stdout:write(tstr(data), '\n')
+else
+  local tpretty = import 'lua-nucleo/tpretty.lua' { 'tpretty' }
+  io.stdout:write(tpretty(data, '  ', 80))
+end
+
+io.stdout:flush()
+
+"
